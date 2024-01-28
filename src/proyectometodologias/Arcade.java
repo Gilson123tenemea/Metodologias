@@ -37,26 +37,15 @@ class Juego {
 
     private void iniciar() {
         Scanner scanner = new Scanner(System.in);
-
-        System.out.println("+----------Bienvenido al juego-------------+");
-        System.out.println("\033[34m+________(ERES EQUIPO AZUL)________+\033[0m");
-        System.out.print("| \033[34mIngrese el nombre del Jugador l\n"
-                + "| Nombre:\033[0m ");
-        jugador1 = new Jugador(scanner.nextLine());
-        System.out.println("\033[34m+----------------------------------+\033[0m");
-        System.out.println("\033[31m+________(ERES EQUIPO ROJO)________+\033[0m");
-        System.out.print("| \033[31mIngrese el nombre del Jugador 2\n"
-                + "| Nombre:\033[0m ");
-        jugador2 = new Jugador(scanner.nextLine());
-        System.out.println("\033[31m+-----------------------------+\033[0m");
+        Scanner leerNum = new Scanner(System.in);
 
         int opcion;
         do {
             mostrarMenu();
-            opcion = scanner.nextInt();
+            opcion = leerNum.nextInt();
             switch (opcion) {
                 case JUGADOR_VS_JUGADOR:
-                    jugarModoJugadorVsJugador(scanner);
+                    jugarModoJugadorVsJugador(scanner, scanner);
                     break;
                 case JUGADOR_VS_MAQUINA:
                     jugarModoJugadorVsMaquina(scanner);
@@ -87,25 +76,73 @@ class Juego {
     }
 
     private void mostrarReglas() {
-        System.out.println("\n------------Reglas del juego:----------");
-        System.out.println("- Conejo salta muro.");
-        System.out.println("- Muro rebota bala de escopeta.");
-        System.out.println("- Humano controla escopeta.");
+        System.out.println("- Se abrira el menu en donde la 1 opcion van a aparecer los modos de juego ");
+        System.out.println("- Si aplasta la 1 opcion se debe agregar los nombres a cada uno de los jugadores, en maquina ya esta definido ");
+        System.out.println("- Aparecera un submenu en donde los modos de juego son Jugador1 vs Jugador2 y Jugador vs Maquina");
+        System.out.println("- Si escoje la opcion 1 jugaran entre 2 personas con los nombres asignados que an escrito");
+        System.out.println("- Si escoje la opcion 2 jugara contra la maquina en donde tendra asignado el nombre del jugador1");
+        System.out.println("- El jugador 1 va empezar la partida");
+        System.out.println("- El juego tendra los siguientes objetos:conejo, muro, escopeta, zanahoria, humano en dode tendra el siguiente mecanismo");
+        System.out.println("- Conejo salta muro");
+        System.out.println("- Conejo come zanahoria");
+        System.out.println("- Muro Aplasta zanahoria");
+        System.out.println("- Muro rebota bala de escopeta");
+        System.out.println("- Muro aplasta humano");
+        System.out.println("- Humano controla escopeta");
+        System.out.println("- Humano come conejo");
+        System.out.println("- Humano come zanahoria");
+        System.out.println("- Escopeta dispara conejo");
+        System.out.println("- Zanahoria tapa escopeta");
     }
 
-    private void jugarModoJugadorVsJugador(Scanner scanner) {
+    private void determinarGanador(int round, String accionJugador1, String accionJugador2) {
+        System.out.println(jugador1.nombre + " elige: " + accionJugador1);
+        System.out.println(jugador2.nombre + " elige: " + accionJugador2);
+
+        // Lógica de determinación del ganador (personaliza según tus reglas)
+        if (accionJugador1.equals(accionJugador2)) {
+            System.out.println("Empate en esta ronda.");
+        } else if ((accionJugador1.equals("conejo") && accionJugador2.equals("muro"))
+                || (accionJugador1.equals("conejo") && accionJugador2.equals("zanahoria"))
+                || (accionJugador1.equals("muro") && accionJugador2.equals("escopeta"))
+                || (accionJugador1.equals("muro") && accionJugador2.equals("zanahoria"))
+                || (accionJugador1.equals("muro") && accionJugador2.equals("humano"))
+                || (accionJugador1.equals("humano") && accionJugador2.equals("escopeta"))
+                || (accionJugador1.equals("humano") && accionJugador2.equals("conejo"))
+                || (accionJugador1.equals("humano") && accionJugador2.equals("zanahoria"))
+                || (accionJugador1.equals("escopeta") && accionJugador2.equals("conejo"))
+                || (accionJugador1.equals("zanahoria") && accionJugador2.equals("escopeta"))) {
+            System.out.println(jugador1.nombre + " gana la ronda.");
+            jugador1.puntaje++;
+        } else {
+            System.out.println(jugador2.nombre + " gana la ronda.");
+            jugador2.puntaje++;
+        }
+    }
+
+    private void jugarModoJugadorVsJugador(Scanner leerCad, Scanner LeerNum) {
         System.out.println("\n--------¡Modo Jugador Vs Jugador!-----------");
+        System.out.println("\033[34m+________(ERES EQUIPO AZUL)________+\033[0m");
+        System.out.print("| \033[34mIngrese el nombre del Jugador l\n"
+                + "| Nombre:\033[0m ");
+        jugador1 = new Jugador(leerCad.nextLine());
+        System.out.println("\033[34m+----------------------------------+\033[0m");
+        System.out.println("\033[31m+________(ERES EQUIPO ROJO)________+\033[0m");
+        System.out.print("| \033[31mIngrese el nombre del Jugador 2\n"
+                + "| Nombre:\033[0m ");
+        jugador2 = new Jugador(leerCad.nextLine());
+        System.out.println("\033[31m+-----------------------------+\033[0m");
 
         for (int round = 1; round <= NUM_ROUNDS; round++) {
             System.out.println("\nRonda " + round + ":");
 
-            String accionJugador1 = seleccionarAccion(scanner, jugador1);
-            String accionJugador2 = seleccionarAccion(scanner, jugador2);
+            String accionJugador1 = seleccionarAccion(leerCad, jugador1);
+            String accionJugador2 = seleccionarAccion(leerCad, jugador2);
 
             determinarGanador(round, accionJugador1, accionJugador2);
 
-            System.out.println("Puntajes actuales: \033[34m" + jugador1.nombre + " - " + jugador1.puntaje + "\033[0m, "
-                    + "\033[32m" + jugador2.nombre + " - " + jugador2.puntaje + "\033[0m");
+            System.out.println("Puntajes actuales: \033[34m" + jugador1.nombre + ":--->" + jugador1.puntaje + "\033[0m, "
+                    + "\033[31m" + jugador2.nombre + ":--->" + jugador2.puntaje + "\033[31m");
         }
 
         // Determina al ganador final
@@ -118,29 +155,36 @@ class Juego {
         }
     }
 
-    private void determinarGanador(int round, String accionJugador1, String accionJugador2) {
-        // Implementa la lógica de las acciones y determina el ganador del round
-        // ...
-
-        // Ejemplo simple: asigna puntos aleatorios para demostración
-        int puntajeJugador1 = random.nextInt(2);
-        int puntajeJugador2 = random.nextInt(2);
-
-        jugador1.puntaje += puntajeJugador1;
-        jugador2.puntaje += puntajeJugador2;
-
-        // Imprime el resultado del round
-        System.out.println("Resultado de la ronda: \033[34m" + jugador1.nombre + " = " + puntajeJugador1 + "\033[0m, "
-                + "\033[32m" + jugador2.nombre + " = " + puntajeJugador2 + "\033[0m");
-    }
-
     private String seleccionarAccion(Scanner scanner, Jugador jugador) {
-        System.out.print("\033[34m" + jugador.nombre + "\033[0m, elige una acción (conejo, muro, escopeta, zanahoria, humano): ");
-        return scanner.next().toLowerCase();
+        System.out.print("\033[34m" + jugador.nombre + "\033[0m, elige una acción (1 - conejo, 2 - muro, 3 - escopeta, 4 - zanahoria, 5 - humano): ");
+        int opcion = scanner.nextInt();
+
+        switch (opcion) {
+            case 1:
+                return "conejo";
+            case 2:
+                return "muro";
+            case 3:
+                return "escopeta";
+            case 4:
+                return "zanahoria";
+            case 5:
+                return "humano";
+            default:
+                System.out.println("Opción no válida. Selecciona nuevamente.");
+                return seleccionarAccion(scanner, jugador);  // Llamada recursiva si la opción no es válida
+        }
     }
 
     private void jugarModoJugadorVsMaquina(Scanner scanner) {
         System.out.println("\n¡Modo Jugador Vs Maquina!");
+        System.out.println("\n--------¡Modo Jugador Vs Jugador!-----------");
+        System.out.println("\033[34m+________(ERES EQUIPO AZUL)________+\033[0m");
+        System.out.print("| \033[34mIngrese el nombre del Jugador l\n"
+                + "| Nombre:\033[0m ");
+        jugador1 = new Jugador(scanner.nextLine());
+        // Inicializa el jugador ficticio "Máquina"
+        jugador2 = new Jugador("Máquina");
 
         for (int round = 1; round <= NUM_ROUNDS; round++) {
             System.out.println("\nRonda " + round + ":");
@@ -166,11 +210,28 @@ class Juego {
 
     private String seleccionarAccionMaquina() {
         // La máquina elige una acción de manera aleatoria
-        String[] acciones = {"\n1.) conejo", "\n2.)muro", "\n3.)escopeta", "\n4.)zanahoria", "\n5.)humano"};
-        int indiceAccion = random.nextInt(acciones.length);
-        return acciones[indiceAccion];
+        int opcion = random.nextInt(5) + 1;
+
+        switch (opcion) {
+            case 1:
+                System.out.println("Máquina elige: conejo");
+                return "conejo";
+            case 2:
+                System.out.println("Máquina elige: muro");
+                return "muro";
+            case 3:
+                System.out.println("Máquina elige: escopeta");
+                return "escopeta";
+            case 4:
+                System.out.println("Máquina elige: zanahoria");
+                return "zanahoria";
+            case 5:
+                System.out.println("Máquina elige: humano");
+                return "humano";
+            default:
+                System.out.println("Error en la selección de la máquina. Se elige conejo por defecto.");
+                return "conejo";
+        }
+
     }
 }
-
-    
-
