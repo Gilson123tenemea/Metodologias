@@ -36,33 +36,39 @@ class Juego {
     }
 
     private void iniciar() {
-        Scanner scanner = new Scanner(System.in);
-        Scanner leerNum = new Scanner(System.in);
+    Scanner leerNum = new Scanner(System.in);
+    Scanner leerCad = new Scanner(System.in);
 
-        int opcion;
-        do {
-            mostrarMenu();
-            opcion = leerNum.nextInt();
-            switch (opcion) {
-                case JUGADOR_VS_JUGADOR:
-                    jugarModoJugadorVsJugador(scanner, scanner);
-                    break;
-                case JUGADOR_VS_MAQUINA:
-                    jugarModoJugadorVsMaquina(scanner);
-                    break;
-                case MOSTRAR_REGLAS:
-                    mostrarReglas();
-                    break;
-                case SALIR:
-                    System.out.println("¡Gracias por jugar!");
-                    break;
-                default:
-                    System.out.println("Opción no válida. Inténtalo de nuevo.");
-            }
-        } while (opcion != SALIR);
+    int opcion;
+    do {
+        mostrarMenu();
+        // Verificar si el siguiente token es un entero
+        while (!leerNum.hasNextInt()) {
+            System.out.println("Error: Debes ingresar un número.");
+            System.out.print("Intenta nuevamente: ");
+            leerNum.next(); // Limpiar el buffer del scanner
+        }
+        opcion = leerNum.nextInt();
 
-        scanner.close();
-    }
+        switch (opcion) {
+            case JUGADOR_VS_JUGADOR:
+                jugarModoJugadorVsJugador(leerCad, leerCad);
+                break;
+            case JUGADOR_VS_MAQUINA:
+                jugarModoJugadorVsMaquina(leerCad);
+                break;
+            case MOSTRAR_REGLAS:
+                mostrarReglas();
+                break;
+            case SALIR:
+                System.out.println("¡Gracias por jugar!");
+                break;
+            default:
+                System.out.println("Opción no válida. Inténtalo de nuevo.");
+        }
+        leerCad.nextLine();
+    } while (opcion != SALIR);
+}
 
     private void mostrarMenu() {
         System.out.println("\033[1m\n\033[1m+\033[0m\033[1m-----------Menú------------\033[1m+\033[0m");
@@ -155,41 +161,65 @@ class Juego {
         }
     }
 
-    private String seleccionarAccion(Scanner scanner, Jugador jugador) {
-        System.out.print("\033[34m" + jugador.nombre + "\033[0m, elige una acción (1 - conejo, 2 - muro, 3 - escopeta, 4 - zanahoria, 5 - humano): ");
-        int opcion = scanner.nextInt();
+    private String seleccionarAccion(Scanner leerNum, Jugador jugador) {
+    System.out.print("\033[34m" + jugador.nombre + "\033[0m, elige una acción (1 - conejo, 2 - muro, 3 - escopeta, 4 - zanahoria, 5 - humano): ");
 
-        switch (opcion) {
-            case 1:
-                return "conejo";
-            case 2:
-                return "muro";
-            case 3:
-                return "escopeta";
-            case 4:
-                return "zanahoria";
-            case 5:
-                return "humano";
-            default:
-                System.out.println("Opción no válida. Selecciona nuevamente.");
-                return seleccionarAccion(scanner, jugador);  // Llamada recursiva si la opción no es válida
-        }
+    // Verificar si el siguiente token es un entero
+    while (!leerNum.hasNextInt()) {
+        System.out.println("Error: Debes ingresar un número.");
+        System.out.print("Intenta nuevamente: ");
+        leerNum.next(); // Limpiar el buffer del scanner
     }
 
-    private void jugarModoJugadorVsMaquina(Scanner scanner) {
+    int opcion = leerNum.nextInt();
+
+    // Validar que la opción esté en el rango correcto
+    while (opcion < 1 || opcion > 5) {
+        System.out.println("Error: Debes ingresar un número entre 1 y 5.");
+        System.out.print("Intenta nuevamente: ");
+
+        // Verificar si el siguiente token es un entero
+        while (!leerNum.hasNextInt()) {
+            System.out.println("Error: Debes ingresar un número.");
+            System.out.print("Intenta nuevamente: ");
+            leerNum.next(); // Limpiar el buffer del scanner
+        }
+
+        opcion = leerNum.nextInt();
+    }
+
+    switch (opcion) {
+        case 1:
+            return "conejo";
+        case 2:
+            return "muro";
+        case 3:
+            return "escopeta";
+        case 4:
+            return "zanahoria";
+        case 5:
+            return "humano";
+        default:
+            // Esto nunca debería ocurrir, pero en caso de algún error, regresamos "conejo" por defecto
+            System.out.println("Error: Opción inválida. Seleccionando 'conejo' por defecto.");
+            return "conejo";
+    }
+}
+
+    private void jugarModoJugadorVsMaquina(Scanner LeerCad) {
         System.out.println("\n¡Modo Jugador Vs Maquina!");
         System.out.println("\n--------¡Modo Jugador Vs Jugador!-----------");
         System.out.println("\033[34m+________(ERES EQUIPO AZUL)________+\033[0m");
         System.out.print("| \033[34mIngrese el nombre del Jugador l\n"
                 + "| Nombre:\033[0m ");
-        jugador1 = new Jugador(scanner.nextLine());
+        jugador1 = new Jugador(LeerCad.nextLine());
         // Inicializa el jugador ficticio "Máquina"
         jugador2 = new Jugador("Máquina");
 
         for (int round = 1; round <= NUM_ROUNDS; round++) {
             System.out.println("\nRonda " + round + ":");
 
-            String accionJugador = seleccionarAccion(scanner, jugador1);
+            String accionJugador = seleccionarAccion(LeerCad, jugador1);
             String accionMaquina = seleccionarAccionMaquina();
 
             determinarGanador(round, accionJugador, accionMaquina);
